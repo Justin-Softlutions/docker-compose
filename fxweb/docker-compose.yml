@@ -1,0 +1,31 @@
+version: "3.8"
+
+services:
+  fxsql:
+    container_name: fxsql
+    image: softlutions/fxsql:${FXVERSION}
+    volumes:
+      - fxsql-data:/var/opt/mssql/data
+      - fxsql-log:/var/opt/mssql/log
+      - fxsql-secrets:/var/opt/mssql/secrets
+    ports:
+      - "${FXSQL_PORT}:1433"
+    restart: unless-stopped
+
+  fxweb:
+    image: softlutions/fxweb:${FXVERSION}  
+    ports:
+      - "${FXWEB_PORT}:80"
+    depends_on:
+      - fxsql
+    restart: unless-stopped
+  fxredis:
+    container_name: redis
+    image: redis:alpine
+    restart: unless-stopped
+
+volumes:
+  #fxweb-data:
+  fxsql-data:
+  fxsql-log:
+  fxsql-secrets:
